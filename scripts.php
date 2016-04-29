@@ -10,6 +10,4 @@
 
 <script src="assets/libraries/bootstrap-select/bootstrap-select.min.js" type="text/javascript"></script>
 
-<script type="text/javascript" src="assets/libraries/bootstrap-fileinput/fileinput.min.js"></script>
-
 <script src="assets/js/superlist.js" type="text/javascript"></script>
