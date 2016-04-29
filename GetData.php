@@ -12,6 +12,7 @@ class GetData {
             $cookie = "cookie.txt";
         }
         $cookie_text = 'PHPSESSID=4k877pjmlf3fh7qi2k56h8ht81; __utmt=1; __utma=114404165.1485780952.1461914772.1461920419.1461924549.4; __utmb=114404165.8.10.1461924549; __utmc=114404165; __utmz=114404165.1461914772.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)';
+
         $ch = curl_init('https://www.shaheenair.com/');
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate,sdch');
         if (isset($header) && !empty($header))
@@ -119,9 +120,13 @@ class GetData {
     public function shaheen_crawler($response) {
         $flightData = array();
         $crawler = new Crawler($response);
-        print_r($crawler->text());
-        $crawler->filter('div#ticketid0123')->each(function(Crawler $node, $i) {
-            print_r($node);
+        $crawler->filter('ul.flightstable')->each(function(Crawler $node, $i) {
+            $li = $node->getNode(0)->getElementsByTagName('li');
+            for($l = 0; $l < $li->length; $l++) {
+                if($li->item($l)->getAttribute('class') == 'ft2')
+                    print_r($li->item($l)->childNodes->item(5)->textContent);
+                echo "<br/>";
+            }
         });
     }
 }
@@ -146,11 +151,7 @@ $postFields = array(
 );
 $pageData->spider(false, false, 'https://www.shaheenair.com/index.php', false, http_build_query($postFields));
 $shaheen_data = $pageData->spider(false, 'https://www.shaheenair.com/index.php?r=member/wait', 'https://www.shaheenair.com/index.php?r=book');
-//$shaheen_data = $pageData->guzzle_post('https://www.shaheenair.com/index.php', $postFields);
-echo $shaheen_data;exit();
-//$shaheen_data = $pageData->guzzle_get('https://www.shaheenair.com/index.php?r=book/');
 
-//echo $shaheen_data;exit();
 $pageData->shaheen_crawler($shaheen_data);
 
 ?>
