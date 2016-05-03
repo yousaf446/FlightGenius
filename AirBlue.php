@@ -14,9 +14,6 @@ class AirBlue {
         $to = $data['to'];
         $depart = $data['depart_date'];
         $arrive = $data['arrive_date'];
-        $adult = $data['adult'];
-        $child = $data['child'];
-        $infant = $data['infant'];
         $depart = str_replace('/', '-', $depart);
         $arrive = str_replace('/', '-', $arrive);
         $aDepart = explode('-', $depart);
@@ -27,7 +24,7 @@ class AirBlue {
         $arriveDay = $aArrive[1];
         $departBody  = $aDepart[2] . "_" . $aDepart[0] . "_" . $aDepart[1];
         $arriveBody  = $aArrive[2] . "_" . $aArrive[0] . "_" . $aArrive[1];
-        $url = 'https://www.airblue.com/bookings/flight_selection.aspx?TT='.$type.'&DC='.$from.'&AC='.$to.'&AM='.$departDate.'&AD='.$departDay.'&RM='.$arriveDate.'&RD='.$arriveDay.'&FL=on&CC=Y&CD=&PA='.$adult.'&PC='.$child.'&PI='.$infant.'&x=51&y=23';
+        $url = 'https://www.airblue.com/bookings/flight_selection.aspx?TT='.$type.'&DC='.$from.'&AC='.$to.'&AM='.$departDate.'&AD='.$departDay.'&RM='.$arriveDate.'&RD='.$arriveDay.'&FL=on&CC=Y&CD=&PA=1&PC=&PI=&x=51&y=23';
         $airblue_data = Spider::spider_call(array(), false, $url, false, false);
         $this->airblue_crawler($airblue_data, $departBody, $arriveBody);
         return $this->airblue_flights;
@@ -38,7 +35,7 @@ class AirBlue {
         $crawler = new Crawler($airblue_data);
         $emptyFilter = $crawler->filter('tr.no_flights_found');
         if(preg_replace('/\s+/', '', $emptyFilter->getNode(0)->textContent) == 'Flightsarenotavailableonthedatesselected') {
-            $flightData = 'Flights are not available on the dates selected';
+            $flightData['error'] = 'Flights are not available on the dates selected';
         } else {
             $filter = $crawler->filter('#trip_1_date_'.$departBody);
             $tbody = $filter->getNode(0)->getElementsByTagName('tbody');

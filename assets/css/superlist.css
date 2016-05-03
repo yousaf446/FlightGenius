@@ -7794,7 +7794,7 @@ h2.widgettitle {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
-  height: 800px;
+  height: 550px;
   position: relative; }
   .hero-image-inner:after {
     background-color: rgba(0, 0, 0, 0.4);
@@ -8630,7 +8630,7 @@ h2.widgettitle {
   margin: 0px 0px 5px 0px; }
 
 .pricing-subtitle {
-  color: #b6b7b8; }
+  color: #363636; }
 
 .pricing-price {
   font-size: 40px;

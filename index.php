@@ -79,18 +79,6 @@
                                                     <input type="text" class="form-control" value="<?php echo $_SESSION['arrive'];?>" placeholder="Returning On" name="arrive_date" id="arrive_date">
                                                 </div><!-- /.form-group -->
 
-                                        <div class="hero-image-child form-group">
-                                            <input type="number" class="form-control" value="<?php echo $_SESSION['adult'];?>" placeholder="Adults" name="adult" id="adult" min="0">
-                                        </div><!-- /.form-group -->
-
-                                         <div class="hero-image-child form-group">
-                                            <input type="number" class="form-control" value="<?php echo $_SESSION['child'];?>" placeholder="Children" name="child" id="child" min="0">
-                                         </div><!-- /.form-group -->
-
-                                        <div class="hero-image-child form-group">
-                                            <input type="number" class="form-control" value="<?php echo $_SESSION['infant'];?>" placeholder="Infants" name="infant" id="infant" min="0">
-                                        </div><!-- /.form-group -->
-
                                                 <button type="submit" name="search" class="btn btn-primary btn-block">Search</button>
                                             </form>
                                         </div><!-- /.col-* -->
@@ -123,23 +111,40 @@
                         <h1>Fair Pricing</h1>
                         <p>Our company offers best pricing options for field agents and companies. If you are interested <br>in special plan don't hesitate and contact our <a href="#">sales support</a>.</p>
                     </div><!-- /.page-header -->
-
-                    <div class="pricings" style="display:none">
+                    <?php if(isset($_POST['search']) && empty($sError)) { ?>
+                    <div class="pricings" style="">
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="pricing">
-                                    <div class="pricing-title">Personal</div><!-- /.pricing-title -->
-                                    <div class="pricing-subtitle">For Personal Use</div><!-- /.pricing-subtitle -->
-                                    <div class="pricing-price"><span class="pricing-currency">$</span>10.59 <span class="pricing-period">/ month</span></div><!-- /.pricing-price -->
-                                    <a href="#" class="btn-primary">Get Started</a>
-                                    <hr>
+                                    <div class="pricing-title">AirBlue</div>
+                                    <?php if(isset($flights['airblue']['error'])) { ?>
+                                    <div class="pricing-price"><span class="pricing-currency"></span><?php echo $flights['airblue']['error']; ?></div>
+                                    <?php } else { ?>
+                                    <div class="pricing-subtitle"><?php echo $_SESSION['depart']." Departure Flights"; ?></div>
                                     <ul class="pricing-list">
-                                        <li><span>Max. Submissions</span><strong>Limited number</strong></li>
-                                        <li><span>Custom Agents</span><strong>One agent for all</strong></li>
-                                        <li><span>Support</span><strong>Mail communication</strong></li>
-                                    </ul><!-- /.pricing-list -->
-                                    <hr>
-                                    <a href="#" class="pricing-action">Full List of Features</a>
+                                        <?php foreach($flights['airblue']['depart'] as $depart) { ?>
+                                        <li><span>Flight | Leave | land | Fare</span><strong>
+                                                <?php echo $depart['flightName']; ?>|
+                                                <?php echo $depart['leave']; ?> |
+                                                <?php echo $depart['land']; ?> |
+                                                <?php echo $depart['standard']; ?>
+                                            </strong>
+                                        </li>
+                                        <?php } ?>
+                                    </ul>
+                                    <div class="pricing-subtitle"><?php echo $_SESSION['arrive']." Return Flights"; ?></div>
+                                    <ul class="pricing-list">
+                                        <?php foreach($flights['airblue']['arrive'] as $arrive) { ?>
+                                            <li><span>Flight | Leave | land | Fare</span><strong>
+                                                    <?php echo $arrive['flightName']; ?>|
+                                                    <?php echo $arrive['leave']; ?> |
+                                                    <?php echo $arrive['land']; ?> |
+                                                    <?php echo $arrive['standard']; ?>
+                                                </strong>
+                                            </li>
+                                        <?php } ?>
+                                    </ul>
+                                    <?php } ?>
                                 </div><!-- /.pricing -->
                             </div><!-- /.col-* -->
 
@@ -178,6 +183,7 @@
                             </div><!-- /.col-* -->
                         </div><!-- /.row -->
                     </div><!-- /.pricings -->
+                    <?php } ?>
 
 
                     <?php include_once 'footer.php'; ?>
