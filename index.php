@@ -14,6 +14,8 @@
 
 <body>
 <?php include_once 'header.php'; ?>
+<?php include_once 'search.php'; ?>
+<?php include_once 'cities.php'; ?>
 <div class="page-wrapper">
 
     <div class="main">
@@ -27,81 +29,69 @@
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-sm-4 col-sm-offset-8 col-lg-6 col-lg-offset-3">
-                                            <form method="get" action="http://preview.byaviators.com/template/superlist/?">
+                                            <form method="POST" action="index.php">
                                                 <h2>Start Searching</h2>
+                                                <?php if(!empty($sError)) { ?>
+                                                <div role="alert" class="alert alert-icon alert-danger">
+                                                    <strong>Oh snap!</strong> <?php echo $sError; ?>
+                                                </div>
+                                                <?php } ?>
+                                                <div class="form-group">
+                                                    <div class="radio-inline">
+                                                        <input type="radio" <?php if($_SESSION['type'] == 'RT') echo "checked"; ?>  name="type" value="RT" id="rt"><label for="rt">Round Trip</label>
 
+                                                    </div>
+                                                <div class="radio-inline">
+                                                    <input type="radio"  <?php if($_SESSION['type'] == 'OW') echo "checked"; ?>  name="type" value="OW"  id="ow"><label for="ow">One Way</label>
+                                                </div>
+                                                    </div>
                                                 <div class="hero-image-location form-group">
                                                     <select class="form-control" title="From" name="from" id="from">
                                                         <option value="">Departure City</option>
-                                                        <option value="AUH">Abu Dhabi (AUH)</option>
-                                                        <option value="DMM">Dammam (DMM)</option>
-                                                        <option value="DXB">Dubai (DXB)</option>
-                                                        <option value="ISB">Islamabad (ISB)</option>
-                                                        <option value="JED">Jeddah (JED)</option>
-                                                        <option value="KHI">Karachi (KHI)</option>
-                                                        <option value="LHE">Lahore (LHE)</option>
-                                                        <option value="MED">Medina (MED)</option>
-                                                        <option value="MUX">Multan (MUX)</option>
-                                                        <option value="MCT">Muscat (MCT)</option>
-                                                        <option value="PEW">Peshawar (PEW)</option>
-                                                        <option value="RYK">Rahim Yar Khan (RYK)</option>
-                                                        <option value="RUH">Riyadh (RUH)</option>
-                                                        <option value="SHJ">Sharjah (SHJ)</option>
-                                                        <option value="SKT">Sialkot (SKT)</option>
-
+                                                        <?php
+                                                            foreach($aCity as $thisCity) {
+                                                        ?>
+                                                        <option value="<?php echo $thisCity['code']; ?>" <?php if($_SESSION['from'] == $thisCity['code']) echo "selected" ?>><?php echo $thisCity['name']; ?></option>
+                                                        <?php
+                                                            }
+                                                        ?>
                                                     </select>
                                                 </div><!-- /.form-group -->
 
                                                 <div class="hero-image-location form-group">
                                                     <select class="form-control" title="To" name="to" id="to">
                                                         <option value="">Arrival City</option>
-                                                        <option value="AUH">Abu Dhabi (AUH)</option>
-                                                        <option value="DMM">Dammam (DMM)</option>
-                                                        <option value="DXB">Dubai (DXB)</option>
-                                                        <option value="ISB">Islamabad (ISB)</option>
-                                                        <option value="JED">Jeddah (JED)</option>
-                                                        <option value="KHI">Karachi (KHI)</option>
-                                                        <option value="LHE">Lahore (LHE)</option>
-                                                        <option value="MED">Medina (MED)</option>
-                                                        <option value="MUX">Multan (MUX)</option>
-                                                        <option value="MCT">Muscat (MCT)</option>
-                                                        <option value="PEW">Peshawar (PEW)</option>
-                                                        <option value="RYK">Rahim Yar Khan (RYK)</option>
-                                                        <option value="RUH">Riyadh (RUH)</option>
-                                                        <option value="SHJ">Sharjah (SHJ)</option>
-                                                        <option value="SKT">Sialkot (SKT)</option>
+                                                        <?php
+                                                        foreach($aCity as $thisCity) {
+                                                            ?>
+                                                            <option value="<?php echo $thisCity['code']; ?>" <?php if($_SESSION['to'] == $thisCity['code']) echo "selected" ?>><?php echo $thisCity['name']; ?></option>
+                                                            <?php
+                                                        }
+                                                        ?>
                                                     </select>
                                                 </div><!-- /.form-group -->
 
                                                 <div class="hero-image-date form-group">
-                                                    <input type="text" class="form-control" placeholder="Departing On" name="depart_date" id="depart_date">
+                                                    <input type="text" class="form-control" value="<?php echo $_SESSION['depart'];?>" placeholder="Departing On" name="depart_date" id="depart_date">
                                                 </div><!-- /.form-group -->
 
                                                 <div class="hero-image-date form-group">
-                                                    <input type="text" class="form-control" placeholder="Returning On" name="arrive_date" id="arrive_date">
+                                                    <input type="text" class="form-control" value="<?php echo $_SESSION['arrive'];?>" placeholder="Returning On" name="arrive_date" id="arrive_date">
                                                 </div><!-- /.form-group -->
 
-                                        <div class="hero-image-cabin form-group">
-                                            <select class="form-control" title="Cabin" name="cabin" id="cabin">
-                                                <option>Select Cabin</option>
-                                                <option>Economy</option>
-                                                <option>Business</option>
-                                            </select>
-                                        </div><!-- /.form-group -->
-
                                         <div class="hero-image-child form-group">
-                                            <input type="number" class="form-control" placeholder="Adults" name="adult" id="adult" min="0">
+                                            <input type="number" class="form-control" value="<?php echo $_SESSION['adult'];?>" placeholder="Adults" name="adult" id="adult" min="0">
                                         </div><!-- /.form-group -->
 
                                          <div class="hero-image-child form-group">
-                                            <input type="number" class="form-control" placeholder="Children" name="child" id="child" min="0">
+                                            <input type="number" class="form-control" value="<?php echo $_SESSION['child'];?>" placeholder="Children" name="child" id="child" min="0">
                                          </div><!-- /.form-group -->
 
                                         <div class="hero-image-child form-group">
-                                            <input type="number" class="form-control" placeholder="Infants" name="infant" id="infant" min="0">
+                                            <input type="number" class="form-control" value="<?php echo $_SESSION['infant'];?>" placeholder="Infants" name="infant" id="infant" min="0">
                                         </div><!-- /.form-group -->
 
-                                                <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                                <button type="submit" name="search" class="btn btn-primary btn-block">Search</button>
                                             </form>
                                         </div><!-- /.col-* -->
                                     </div><!-- /.row -->
