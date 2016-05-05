@@ -39,7 +39,13 @@ if(isset($_POST['search'])) {
         ];
         $airblue = new AirBlue();
         $flights['airblue'] = $airblue->airblue_url($data);
-        print_r($flights['airblue']);
+        //print_r($flights['airblue']);
+        $shaheen = new ShaheenAir();
+        $flights['shaheen'] = $shaheen->shaheenair_url($data);
+        //print_r($flights['shaheen']);
+        $pia = new PIA();
+        $flights['pia'] = $pia->pia_url($data);
+        //print_r($flights['pia']);
     }
 
 }

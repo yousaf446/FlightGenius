@@ -32,3 +32,15 @@ $(document).ready(function() {
         });
     })
 });
+
+function ArriveDiv(method) {
+    if(method == 'show')
+        $("#arriveDiv").show();
+    else if(method == 'hide')
+    $("#arriveDiv").hide();
+}
+
+function loader() {
+    $("#loader").show();
+    $("#search").hide();
+}

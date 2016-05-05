@@ -8632,6 +8632,9 @@ h2.widgettitle {
 .pricing-subtitle {
   color: #363636; }
 
+.pricing-subtitle-note {
+  color: #d81814; }
+
 .pricing-price {
   font-size: 40px;
   margin: 25px 0px 30px 0px; }

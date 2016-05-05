@@ -6,14 +6,36 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ShaheenAir {
 
-    public function shaheenair_url() {
+    private $shaheen_flights;
 
+    public function shaheenair_url($data) {
+        $type = $data['type'];
+        $from = $data['from'];
+        $to = $data['to'];
+        $depart = $data['depart_date'];
+        $arrive = $data['arrive_date'];
+        $postFields = array(
+            'AvailForm' =>array(
+                'FROMCITY' => $from,
+                'TOCITY' => $to,
+                'FROMDATE' => $depart,
+                'TODATE' => $arrive,
+                'ADULTCOUNT' => '1',
+                'CHILDCOUNT' => '0',
+                'INFANTCOUNT' => '0',
+                'CURRENCY' => 'PKR'
+            )
+        );
+        Spider::spider_call(false, false, 'https://www.shaheenair.com/index.php', false, http_build_query($postFields));
+        $shaheen_data = Spider::spider_call(false, 'https://www.shaheenair.com/index.php?r=member/wait', 'https://www.shaheenair.com/index.php?r=book');
+        $this->shaheen_crawler($shaheen_data, $depart, $arrive);
+        return $this->shaheen_flights;
     }
-    public function shaheen_crawler($response) {
+    public function shaheen_crawler($response, $depart, $arrive) {
         $flightData = array();
         $crawler = new Crawler($response);
-        $outbound = $crawler->filter('b.size18')->getNode(0)->textContent;
-        $inbound = $crawler->filter('b.size18')->getNode(1)->textContent;
+        $outbound = isset($crawler->filter('b.size18')->getNode(0)->textContent) ? $crawler->filter('b.size18')->getNode(0)->textContent : "";
+        $inbound = isset($crawler->filter('b.size18')->getNode(1)->textContent) ? $crawler->filter('b.size18')->getNode(1)->textContent : "";
         $mutex = false;
         $flightFilter = [];
         $flightFilter[] = $crawler->filter('ul.flightstable')->each(function(Crawler $node, $i) {
@@ -33,9 +55,11 @@ class ShaheenAir {
                     }
                 } else {
                     if ($li->item($l)->getAttribute('class') == 'ft3') {
-                        $thisflight['fare'] = $li->item($l)->childNodes->item(2)->textContent;
+                        $fare = str_replace(",", "", $li->item($l)->childNodes->item(2)->textContent);
+                        $thisflight['fare'] = intval($fare);
                     } elseif ($li->item($l)->getAttribute('class') == 'ft4') {
-                        $thisflight['fee_tax'] = $li->item($l)->childNodes->item(2)->textContent;
+                        $fee_tax = str_replace(",", "", $li->item($l)->childNodes->item(2)->textContent);
+                        $thisflight['fee_tax'] = intval($fee_tax);
                     }
                 }
             }
@@ -61,11 +85,12 @@ class ShaheenAir {
             }
             $flightCount++;
         }
-        if($this->bDebug) {
-            echo "<pre>";
-            echo print_r($flightData);
-            echo "</pre>";
+        if(empty($flightData)) {
+            $departDate = date('l, M, d, Y', strtotime($depart));
+            $arriveDate = date('l, M, d, Y', strtotime($arrive));
+            $flightData['depart']['error'] = "Flights are not available on ".$departDate;
+            $flightData['arrive']['error'] = "Flights are not available on ".$arriveDate;
         }
-        $this->flightData['shaheen'] = $flightData;
+        $this->shaheen_flights = $flightData;
     }
 }

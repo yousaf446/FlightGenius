@@ -13,9 +13,9 @@
 
 
 <body>
-<?php include_once 'header.php'; ?>
-<?php include_once 'search.php'; ?>
-<?php include_once 'cities.php'; ?>
+<?php include_once 'header.php';
+include_once 'search.php';
+include_once 'cities.php'; ?>
 <div class="page-wrapper">
 
     <div class="main">
@@ -38,11 +38,11 @@
                                                 <?php } ?>
                                                 <div class="form-group">
                                                     <div class="radio-inline">
-                                                        <input type="radio" <?php if($_SESSION['type'] == 'RT') echo "checked"; ?>  name="type" value="RT" id="rt"><label for="rt">Round Trip</label>
+                                                        <input type="radio" <?php if($_SESSION['type'] == 'RT') echo "checked"; ?>  name="type" value="RT" id="rt"><label onclick="ArriveDiv('show')" for="rt">Round Trip</label>
 
                                                     </div>
                                                 <div class="radio-inline">
-                                                    <input type="radio"  <?php if($_SESSION['type'] == 'OW') echo "checked"; ?>  name="type" value="OW"  id="ow"><label for="ow">One Way</label>
+                                                    <input type="radio"  <?php if($_SESSION['type'] == 'OW') echo "checked"; ?>  name="type" value="OW"  id="ow"><label onclick="ArriveDiv('hide')" for="ow">One Way</label>
                                                 </div>
                                                     </div>
                                                 <div class="hero-image-location form-group">
@@ -74,12 +74,13 @@
                                                 <div class="hero-image-date form-group">
                                                     <input type="text" class="form-control" value="<?php echo $_SESSION['depart'];?>" placeholder="Departing On" name="depart_date" id="depart_date">
                                                 </div><!-- /.form-group -->
-
-                                                <div class="hero-image-date form-group">
+                                                <?php if($_SESSION['type'] != 'OW') { ?>
+                                                <div id="arriveDiv" class="hero-image-date form-group">
                                                     <input type="text" class="form-control" value="<?php echo $_SESSION['arrive'];?>" placeholder="Returning On" name="arrive_date" id="arrive_date">
                                                 </div><!-- /.form-group -->
-
-                                                <button type="submit" name="search" class="btn btn-primary btn-block">Search</button>
+                                                <?php } ?>
+                                                <button type="submit" onclick="loader()" id="search" name="search" class="btn btn-primary btn-block">Search</button>
+                                                <div class="loading loading--double" id="loader"></div>
                                             </form>
                                         </div><!-- /.col-* -->
                                     </div><!-- /.row -->
@@ -117,73 +118,170 @@
                             <div class="col-sm-4">
                                 <div class="pricing">
                                     <div class="pricing-title">AirBlue</div>
-                                    <?php if(isset($flights['airblue']['error'])) { ?>
-                                    <div class="pricing-price"><span class="pricing-currency"></span><?php echo $flights['airblue']['error']; ?></div>
+                                    <div class="pricing-subtitle-note">Dates are flexible</div>
+                                    <?php if (isset($flights['airblue']['error'])) { ?>
+                                        <div class="pricing-price"><span
+                                                class="pricing-currency"></span><?php echo $flights['airblue']['error']; ?>
+                                        </div>
                                     <?php } else { ?>
-                                    <div class="pricing-subtitle"><?php echo $_SESSION['depart']." Departure Flights"; ?></div>
-                                    <ul class="pricing-list">
-                                        <?php foreach($flights['airblue']['depart'] as $depart) { ?>
-                                        <li><span>Flight | Leave | land | Fare</span><strong>
-                                                <?php echo $depart['flightName']; ?>|
-                                                <?php echo $depart['leave']; ?> |
-                                                <?php echo $depart['land']; ?> |
-                                                <?php echo $depart['standard']; ?>
-                                            </strong>
-                                        </li>
-                                        <?php } ?>
-                                    </ul>
-                                    <div class="pricing-subtitle"><?php echo $_SESSION['arrive']." Return Flights"; ?></div>
-                                    <ul class="pricing-list">
-                                        <?php foreach($flights['airblue']['arrive'] as $arrive) { ?>
-                                            <li><span>Flight | Leave | land | Fare</span><strong>
-                                                    <?php echo $arrive['flightName']; ?>|
-                                                    <?php echo $arrive['leave']; ?> |
-                                                    <?php echo $arrive['land']; ?> |
-                                                    <?php echo $arrive['standard']; ?>
-                                                </strong>
-                                            </li>
-                                        <?php } ?>
-                                    </ul>
-                                    <?php } ?>
+                                        <div class="pricing-subtitle">Departure Flights</div>
+                                        <?php if (isset($flights['airblue']['depart']['error'])) { ?>
+                                            <strong><?php echo $flights['airblue']['depart']['error']; ?></strong>
+                                        <?php } else { ?>
+                                            <ul class="pricing-list">
+                                            <?php foreach ($flights['airblue']['depart'] as $depart) { ?>
+                                                <li><span>Flight | Date | Leave | Land | Fare</span><strong>
+                                                        <?php echo $depart['flightName']; ?> |
+                                                        <?php echo $_SESSION['depart']; ?> |
+                                                        <?php echo $depart['leave']; ?> |
+                                                        <?php echo $depart['land']; ?> |
+                                                        <?php echo $depart['standard']; ?>
+                                                    </strong>
+                                                </li>
+                                            <?php }
+                                        } ?>
+                                        </ul>
+                                        <?php if ($_SESSION['type'] != 'OW') { ?>
+                                            <div class="pricing-subtitle">Return Flights</div>
+                                            <?php if (isset($flights['airblue']['arrive']['error'])) { ?>
+                                                <strong><?php echo $flights['airblue']['arrive']['error']; ?></strong>
+                                            <?php } else { ?>
+                                                <ul class="pricing-list">
+                                                <?php foreach ($flights['airblue']['arrive'] as $arrive) { ?>
+                                                    <li><span>Flight | Date | Leave | Land | Fare</span><strong>
+                                                            <?php echo $arrive['flightName']; ?> |
+                                                            <?php echo $_SESSION['arrive']; ?> |
+                                                            <?php echo $arrive['leave']; ?> |
+                                                            <?php echo $arrive['land']; ?> |
+                                                            <?php echo $arrive['standard']; ?>
+                                                        </strong>
+                                                    </li>
+                                                <?php }
+                                            } ?>
+                                            </ul>
+                                        <?php }
+                                    }
+                                    ?>
                                 </div><!-- /.pricing -->
                             </div><!-- /.col-* -->
 
                             <div class="col-sm-4">
                                 <div class="pricing">
-                                    <div class="pricing-title">Business</div><!-- /.pricing-title -->
-                                    <div class="pricing-subtitle">Best for Companies</div><!-- /.pricing-subtitle -->
-                                    <div class="pricing-price"><span class="pricing-currency">$</span>19.59 <span class="pricing-period">/ month</span></div><!-- /.pricing-price -->
-                                    <a href="#" class="btn-primary">Get Started</a>
-                                    <hr>
-                                    <ul class="pricing-list">
-                                        <li><span>Max. Submissions</span><strong>Unlimited number</strong></li>
-                                        <li><span>Custom Agents</span><strong>One agent for all</strong></li>
-                                        <li><span>Support</span><strong>Mail communication</strong></li>
-                                    </ul><!-- /.pricing-list -->
-                                    <hr>
-                                    <a href="#" class="pricing-action">Full List of Features</a>
+                                    <div class="pricing-title">Shaheen Air</div>
+                                    <div class="pricing-subtitle-note">Dates are flexible</div>
+                                    <?php if (isset($flights['shaheen']['error'])) { ?>
+                                        <div class="pricing-price"><span
+                                                class="pricing-currency"></span><?php echo $flights['shaheen']['error']; ?>
+                                        </div>
+                                    <?php } else { ?>
+                                        <div class="pricing-subtitle">Departure Flights</div>
+                                        <?php if (isset($flights['shaheen']['depart']['error'])) { ?>
+                                            <strong><?php echo $flights['shaheen']['depart']['error']; ?></strong>
+                                        <?php } else { ?>
+                                            <ul class="pricing-list">
+                                                <?php $departCount = 0;
+                                                foreach ($flights['shaheen']['depart'] as $depart) {
+                                                    if ($departCount < 3) { ?>
+                                                        <li><span>Flight | Date | Leave | Land | Fare</span><strong>
+                                                                <?php echo $depart[0]['flightName']; ?> |
+                                                                <?php echo $depart[0]['leaveDate']; ?> |
+                                                                <?php echo $depart[0]['leaveTime']; ?> |
+                                                                <?php echo $depart[0]['landTime']; ?> |
+                                                                <?php echo "PKR" . (intval($depart[1]['fare']) + intval($depart[1]['fee_tax'])); ?>
+                                                            </strong>
+                                                        </li>
+                                                    <?php }
+                                                    $departCount++;
+                                                } ?>
+                                            </ul>
+                                        <?php } ?>
+                                        <?php if ($_SESSION['type'] != 'OW') { ?>
+                                            <div class="pricing-subtitle">Return Flights</div>
+                                            <?php if (isset($flights['shaheen']['arrive']['error'])) { ?>
+                                                <strong><?php echo $flights['shaheen']['arrive']['error']; ?></strong>
+                                            <?php } else { ?>
+                                                <ul class="pricing-list">
+                                                <?php $arriveCount = 0;
+                                                foreach ($flights['shaheen']['arrive'] as $arrive) {
+                                                    if ($arriveCount < 3) { ?>
+                                                        <li><span>Flight | Date | Leave | Land | Fare</span><strong>
+                                                                <?php echo $arrive[0]['flightName']; ?> |
+                                                                <?php echo $arrive[0]['leaveDate']; ?> |
+                                                                <?php echo $arrive[0]['leaveTime']; ?> |
+                                                                <?php echo $arrive[0]['landTime']; ?> |
+                                                                <?php echo "PKR" . (intval($arrive[1]['fare']) + intval($arrive[1]['fee_tax'])); ?>
+                                                            </strong>
+                                                        </li>
+                                                    <?php }
+                                                    $arriveCount++;
+                                                }
+                                            }
+                                            ?>
+                                            </ul>
+                                        <?php }
+                                    } ?>
                                 </div><!-- /.pricing -->
                             </div><!-- /.col-* -->
 
                             <div class="col-sm-4">
                                 <div class="pricing">
-                                    <div class="pricing-title">Unlimited</div><!-- /.pricing-title -->
-                                    <div class="pricing-subtitle">Entrepreneurs</div><!-- /.pricing-subtitle -->
-                                    <div class="pricing-price"><span class="pricing-currency">$</span>49.59 <span class="pricing-period">/ month</span></div><!-- /.pricing-price -->
-                                    <a href="#" class="btn-primary">Get Started</a>
-                                    <hr>
-                                    <ul class="pricing-list">
-                                        <li><span>Max. Submissions</span><strong>Unlimited number</strong></li>
-                                        <li><span>Custom Agents</span><strong>Unlimited number</strong></li>
-                                        <li><span>Support</span><strong>Personal training</strong></li>
-                                    </ul><!-- /.pricing-list -->
-                                    <hr>
-                                    <a href="#" class="pricing-action">Full List of Features</a>
+                                    <div class="pricing-title">PIA</div>
+                                    <div class="pricing-subtitle-note">Dates are flexible</div>
+                                    <?php if (isset($flights['pia']['error'])) { ?>
+                                        <div class="pricing-price"><span
+                                                class="pricing-currency"></span><?php echo $flights['pia']['error']; ?>
+                                        </div>
+                                    <?php } else { ?>
+                                        <div class="pricing-subtitle">Departure Flights</div>
+                                        <?php if (isset($flights['pia']['depart']['error'])) { ?>
+                                            <strong><?php echo $flights['pia']['depart']['error']; ?></strong>
+                                        <?php } else { ?>
+                                            <ul class="pricing-list">
+                                                <?php $departCount = 0;
+                                                foreach ($flights['pia']['depart'] as $depart) {
+                                                    if ($departCount < 3) { ?>
+                                                        <li><span>Flight | Date | Leave | Land | Fare</span><strong>
+                                                                <?php echo $depart['flightName']; ?> |
+                                                                <?php echo $_SESSION['depart']; ?> |
+                                                                <?php echo $depart['leave']; ?> |
+                                                                <?php echo $depart['land']; ?> |
+                                                                <?php echo $depart['economy']; ?>
+                                                            </strong>
+                                                        </li>
+                                                    <?php }
+                                                    $departCount++;
+                                                } ?>
+                                            </ul>
+                                        <?php } ?>
+                                        <?php if ($_SESSION['type'] != 'OW') { ?>
+                                            <div class="pricing-subtitle">Return Flights</div>
+                                            <?php if (isset($flights['pia']['arrive']['error'])) { ?>
+                                                <strong><?php echo $flights['pia']['arrive']['error']; ?></strong>
+                                            <?php } else { ?>
+                                                <ul class="pricing-list">
+                                                <?php $arriveCount = 0;
+                                                foreach ($flights['pia']['arrive'] as $arrive) {
+                                                    if ($arriveCount < 3) { ?>
+                                                        <li><span>Flight | Date | Leave | Land | Fare</span><strong>
+                                                                <?php echo $arrive['flightName']; ?> |
+                                                                <?php echo $_SESSION['arrive']; ?> |
+                                                                <?php echo $arrive['leave']; ?> |
+                                                                <?php echo $arrive['land']; ?> |
+                                                                <?php echo $arrive['economy']; ?>
+                                                            </strong>
+                                                        </li>
+                                                    <?php }
+                                                    $arriveCount++;
+                                                }
+                                            }
+                                            ?>
+                                            </ul>
+                                        <?php }
+                                    } ?>
                                 </div><!-- /.pricing -->
                             </div><!-- /.col-* -->
-                        </div><!-- /.row -->
-                    </div><!-- /.pricings -->
-                    <?php } ?>
+                        </div><!-- /.pricings -->
+                        <?php } ?>
 
 
                     <?php include_once 'footer.php'; ?>

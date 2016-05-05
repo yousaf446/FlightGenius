@@ -3,7 +3,7 @@
         <div class="container">
             <div class="header-inner">
                 <div class="header-logo">
-                    <a href="index-2.html">
+                    <a href="index.php">
                         <img src="assets/img/logo.png" alt="Logo">
                         <span>Flight Genius</span>
                     </a>

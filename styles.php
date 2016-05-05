@@ -3,3 +3,4 @@
 <link href="assets/libraries/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css">
 <link href="assets/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css">
 <link href="assets/css/superlist.css" rel="stylesheet" type="text/css" >
+<link href="assets/css/loader.scss" rel="stylesheet" type="text/css" >
